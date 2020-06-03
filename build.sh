@@ -13,6 +13,7 @@ build() {
     mkdir -p dist
 
     cp -r './manifest.json' './src/devtools/devtools.html' './src/devtools/devtools.js' dist
+    cp -r './src/devtools/ElementsSidePane.html' './src/devtools/ElementsSidePane.js' dist
 
     cp -r build/* dist
 }
