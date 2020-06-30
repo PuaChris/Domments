@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './styles/App.scss';
-import Comment from './components/Comment.js';
+import React, { Component } from "react";
+import "./styles/App.scss";
+import CommentList from "./components/CommentList";
 
 class App extends Component {
-  render(){
+  render() {
     return (
       <div className="App">
-          <Comment />
+
+        <CommentList />
       </div>
     );
   }

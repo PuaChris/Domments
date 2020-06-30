@@ -1,11 +1,11 @@
 {
   "name": "Domments",
-  "version": "1.0",
-  "description": "A Chrome DevTools extension that allows users to add and modify comments on DOM elements of any page.",
   "manifest_version": 2,
-  "minimum_chrome_version": "10.0",
-  "permissions": [
-      "*://*/*"
-    ],
-    "devtools_page": "devtools.html"
+  "author": "Chris Pua",
+  "description": "Allows users to add personal comments on any page",
+  "version": "1.0.0",
+  "browser_action": {
+    "default_icon": "logo512.png",
+    "default_popup": "index.html"
+  }
 }

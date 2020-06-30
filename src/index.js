@@ -1,14 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './styles/index.scss';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+/* eslint-disable no-undef */
+import React from "react";
+import ReactDOM from "react-dom";
+import "./styles/index.scss";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('panel-root')
+  document.getElementById("comment-list"),
 );
 
 // If you want your app to work offline and load faster, you can change
