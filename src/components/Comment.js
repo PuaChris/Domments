@@ -1,45 +1,32 @@
 import React, { Component } from "react";
 import * as Constants from "../constants";
-import CommentResolveBtn from "./CommentResolveBtn";
 import "./styles/comment.scss";
 
 class Comment extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: props.id,
       message: Constants.TestCommentMessage,
-      isResolved: false,
-      isDeleted: false,
     };
-    this.handleResolve = this.handleResolve.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
   }
 
-  handleResolve() {
-    const { isResolved } = this.state;
-
-    if (!isResolved) {
-      this.setState(() => ({ isResolved: true }));
-    } else {
-      this.setState(() => ({ isResolved: false }));
-    }
-  }
-
-  handleDelete() {
-    this.setState(() => ({ isDeleted: true }));
+  onClick = () => {
+    const id = this.state.id;
+    this.props.deleteComment(id);
   }
 
   render() {
-    const { message } = this.state;
-    const { isResolved } = this.state;
+    const message = this.state.message;
+    const deleteComment = this.props.deleteComment;
     return (
       <div className="comment">
         <div className="comment__message">
           { message }
         </div>
-
-        <CommentResolveBtn isResolved={isResolved} handleResolve={this.handleResolve} />
-        <div className="comment__delete-btn" />
+        <button type="button" onClick={this.onClick}>
+          <i className="far fa-trash-alt" />
+        </button>
       </div>
     );
   }
