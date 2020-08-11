@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import "./styles/App.scss";
 import CommentList from "./components/CommentList";
 

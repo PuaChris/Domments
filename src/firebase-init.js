@@ -1,3 +1,5 @@
+import firebase from 'firebase/app';
+
 // Your web app's Firebase configuration
 const api_key = process.env.REACT_APP_API_KEY;
 
@@ -11,4 +13,5 @@ var firebaseConfig = {
   appId: "1:75583379576:web:321019c69fd908713a758d"
 };
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+var Firebase = firebase.initializeApp(firebaseConfig);
+export default Firebase;

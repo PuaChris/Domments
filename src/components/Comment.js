@@ -31,6 +31,8 @@ function Comment(props) {
   const handleSubmit = (event) => {
     console.log("Comment message saved: " + message);
     event.preventDefault();
+
+    
   }
 
   const onClick = () => {
