@@ -9,6 +9,9 @@ import Comment from "./Comment";
 import CommentListAddBtn from "./CommentListAddBtn";
 import * as Constants from '../helper/constants';
 import { getTimestamp } from '../helper/timestamp';
+import { createCommentObj, createCommentObjForDatabase } from '../helper/createCommentObj';
+
+
 
 class CommentList extends Component {
   constructor(props) {
@@ -25,11 +28,12 @@ class CommentList extends Component {
     this.deleteComment = this.deleteComment.bind(this);
   }
 
-  componentDidMount(){
-    this.initializeDb();
+  async componentDidMount() {
+    await this.initializeDb();
+    this.getComments();
   }
 
-  async initializeDb(){
+  async initializeDb() {
     // Checking to see if user exists and getting their ID to be used for referencing when adding a new comment
     const users = Firebase.firestore().collection("users");
 
@@ -40,13 +44,12 @@ class CommentList extends Component {
 
     // Check user's collection of websites 
     // TODO: See what website the user is currently on and check that against the website collection
+    // TODO: Get doc reference to the user's current website for easier referencing
     if (userDocId) {
       this.setState({
         isUserLoggedIn: true
       });
 
-
-      
       this.userDocRef = users.doc(userDocId);
       this.userDocData = (await this.userDocRef.get()).data();
 
@@ -70,39 +73,69 @@ class CommentList extends Component {
     }
   }
 
-    // Retriving Document ID of current user
-    async getUser(users) {
-      let docId = null;
+  // Retriving Document ID of current user
+  async getUser(users) {
+    let docId = null;
 
-      let querySnapshot = await users.where("userid", "==", Constants.TestUserId)
-        .get()
-        .catch(function(error) {
-          console.error("Error getting documents: ", error);
-        });
-
-      // Should only return one user
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-        docId = doc.id;
+    let querySnapshot = await users.where("userid", "==", Constants.TestUserId)
+      .get()
+      .catch(function(error) {
+        console.error("Error getting documents: ", error);
       });
 
-      return docId;
-    }
+    // Should only return one user
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+      docId = doc.id;
+    });
 
-  async addComment() {
-    // TODO: When adding a new user, use this newId
-    const newId = uuid();
-    const newComment = {
-      id: newId,
-    };
+    return docId;
+  }
 
-    // Using concat to create a new array with the new comment
-    this.setState(
-      (prevState) => ({
-        commentList: prevState.commentList.concat(newComment),
-      }), () => console.log("Successfully added new comment!"),
+  async getComments() {
+    // Checks which website they are on and pull comments 
+    let website = Constants.TestWebsite;
+    let commentList = [];
+
+    let allCommentsFromDb = await this.websiteCollection.doc(website).collection("comments").get();
+    allCommentsFromDb.forEach((doc) => {
+      let commentListItem = createCommentObj (
+        doc.id, 
+        this.userDocData.userid, 
+        this.userDocData.username,
+        doc.data().message, 
+        doc.data().timestamp
+      );
+
+      commentList.push(commentListItem);
+    });
+
+    this.setState(() => ({
+        commentList: commentList
+      }), () => console.log("Retrieved " + commentList.length + " comments from: " + website),
     );
     
+
+  }
+
+  async addComment() {
+    const newCommentId = await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc().id;
+    const emptyMessage = "";
+    const emptyTimestamp = "";
+
+    const commentListItem = createCommentObj (
+      newCommentId,
+      this.userDocData.userid,
+      this.userDocData.username,
+      emptyMessage,
+      emptyTimestamp
+    );
+
+    // Using concat to create a new array with the new comment
+    this.setState((prevState) => ({
+        commentList: prevState.commentList.concat(commentListItem),
+      }), () => console.log("Successfully added new comment!"),
+    );
   }
 
  /*
@@ -114,23 +147,21 @@ class CommentList extends Component {
  * 6. Inside saveComment(), it's going to save the ID, message, user, and timestamp as a comment
  */
 
-
   // TODO: Check which website they are currently on and add a comment in a sub-collection
-  // TODO: If collection does not exist, make a new one -> How to do this?
   // TODO: If website does not exist in the collection, add a new one using .set()
-
   // TODO: Check to see if commentId already exists because that means it's an edit
+
   async saveComment(commentId, message) {
     if (message) {
       let timestamp = getTimestamp();
 
-      // ? Still unsure if I should add "commentId: commentId" as a field since the ID of the document is being set to the commentId
-      let commentData = {
-        userId: this.userDocData.userid,
-        userName: this.userDocData.username,
-        message: message,
-        timestamp: timestamp
-      };
+      // No need to save ID because it's automatically generated by Firestore as the key, which is what is used to identify each unique comment
+      let commentData = createCommentObjForDatabase (
+        this.userDocData.userid,
+        this.userDocData.username,
+        message, 
+        timestamp
+      );
 
       // Promise returns void
       await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc(commentId).set(commentData)
@@ -157,6 +188,7 @@ class CommentList extends Component {
     );
     console.log(this.state.commentList);
   }
+
 
   render() {
     const { commentList } = this.state;
