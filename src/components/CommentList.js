@@ -183,7 +183,7 @@ class CommentList extends Component {
   deleteComment(id) {
     this.setState(
       (prevState) => ({
-        commentList: prevState.commentList.filter((comment) => comment.id !== id)
+        commentList: prevState.commentList.filter((commentItem) => commentItem.id !== id)
       }), () => console.log(`Comment ${id} deleted`)
     );
     console.log(this.state.commentList);
@@ -199,10 +199,14 @@ class CommentList extends Component {
         </div>
 
         {/* Rendering all of the comments */}
-        {commentList.map((comment) => (
+        {commentList.map((commentItem) => (
           <Comment 
-            key={comment.id}
-            id={comment.id} 
+            key={commentItem.id}
+            id={commentItem.id} 
+            userId={commentItem.userId}
+            userName={commentItem.userName}
+            message={commentItem.message}
+            timestamp={commentItem.timestamp}
             deleteComment={this.deleteComment} 
             saveComment={this.saveComment} 
           />

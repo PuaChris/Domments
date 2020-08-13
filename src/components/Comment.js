@@ -16,10 +16,14 @@ const useStyles = makeStyles((theme) => ({
 
 function Comment(props) {
   const id = props.id;
+  const userId = props.userId;
+  const userName = props.userName;
+  const timestamp = props.timestamp;
+
   const saveComment = props.saveComment;
   const deleteComment = props.deleteComment;
 
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState(props.message);
 
   const classes = useStyles();
 
@@ -54,7 +58,8 @@ function Comment(props) {
             <TextField
               className="comment__message"
               onChange={handleChange}
-              label="<User Name>"
+              label={userName}
+              defaultValue={message}
               placeholder="Enter comment here"
               multiline
               margin="normal"
