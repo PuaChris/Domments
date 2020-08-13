@@ -7,8 +7,8 @@ import "firebase/firestore";
 
 import Comment from "./Comment";
 import CommentListAddBtn from "./CommentListAddBtn";
-import * as Constants from '../constants';
-import { useScrollTrigger } from "@material-ui/core";
+import * as Constants from '../helper/constants';
+import { getTimestamp } from '../helper/timestamp';
 
 class CommentList extends Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class CommentList extends Component {
     // ? Do I not care about the order of the comments (array) or do I want to keep it the same order (not array)?
     this.state = {
       commentList: [],
+      isUserLoggedIn: false
     };
 
     this.addComment = this.addComment.bind(this);
@@ -29,57 +30,70 @@ class CommentList extends Component {
   }
 
   async initializeDb(){
-    
-    // TODO: Make an attribute that directly links to the current user and their collections instead of the entire database
-    this.db = Firebase.firestore();
-
     // Checking to see if user exists and getting their ID to be used for referencing when adding a new comment
-    const users = this.db.collection("users");
-    let userDocId = null;
+    const users = Firebase.firestore().collection("users");
 
-    await this.getUser(users)
-      .then((docId) => {
-        userDocId = docId;
-      })
+    let userDocId = await this.getUser(users)
       .catch((error) => {
-        console.log("Error in trying to get current user's Document reference: " + error);
-      })
-    
-    this.userRef = null;
-    this.websites = null;
+        console.error("Error in trying to get current user's Document reference: " + error);
+      });
 
     // Check user's collection of websites 
-    // TODO: Refactor this code snippet into another function
     // TODO: See what website the user is currently on and check that against the website collection
     if (userDocId) {
-      this.userRef = users.doc(userDocId);
-      this.websites = this.userRef.collection("websites");
+      this.setState({
+        isUserLoggedIn: true
+      });
 
-      this.websites.get()
-        .then((querySnapshot) => {
-          if (querySnapshot.empty) {
-            console.log("User has no websites in their collection.");
-            console.log("QuerySnapshot: " + querySnapshot);
-          }
-          else {
-            console.log("User has websites in their collection.");
-          }
-        })
+
+      
+      this.userDocRef = users.doc(userDocId);
+      this.userDocData = (await this.userDocRef.get()).data();
+
+      this.websiteCollection = this.userDocRef.collection("websites");
+
+      let querySnapshot = await this.websiteCollection.get()
         .catch((error) => {
-          console.log("Error in getting user's 'websites' Collection: " + error);
+          console.error("Error in getting user's 'websites' collection: " + error);
         });
+
+        if (querySnapshot.empty) {
+          console.log("User has no websites in their collection.");
+        }
+        else {
+          console.log("User has websites in their collection.");
+        }
+
     }
     else {
       console.log("User does not exist");
     }
   }
 
+    // Retriving Document ID of current user
+    async getUser(users) {
+      let docId = null;
+
+      let querySnapshot = await users.where("userid", "==", Constants.TestUserId)
+        .get()
+        .catch(function(error) {
+          console.error("Error getting documents: ", error);
+        });
+
+      // Should only return one user
+      querySnapshot.forEach((doc) => {
+        console.log(doc.id, " => ", doc.data());
+        docId = doc.id;
+      });
+
+      return docId;
+    }
+
   async addComment() {
     // TODO: When adding a new user, use this newId
     const newId = uuid();
     const newComment = {
       id: newId,
-      Element: "New element",
     };
 
     // Using concat to create a new array with the new comment
@@ -91,17 +105,47 @@ class CommentList extends Component {
     
   }
 
-  saveComment(commentId, message) {
-    if (id) {
-      users.add({
-        name: Constants.TestUserName
-      })
-      .then(() => {
-        console.log("Document successfully added!");
-      })
+ /*
+ 1. User has a comment they want to save. It is stored in 'message' hook. 
+ 2. User presses 'Comment' button. handleSubmit() is called. 
+ 3. saveComment() is passed down from CommentList.js -> Comment.js so it can be called inside handleSubmit()
+ 4. saveComment() takes in the Comment ID and message (so we know which Comment we're saving the message too)
+ 5. We already checked for the user auth upon start up just add the user's name as the commenter
+ * 6. Inside saveComment(), it's going to save the ID, message, user, and timestamp as a comment
+ */
+
+
+  // TODO: Check which website they are currently on and add a comment in a sub-collection
+  // TODO: If collection does not exist, make a new one -> How to do this?
+  // TODO: If website does not exist in the collection, add a new one using .set()
+
+  // TODO: Check to see if commentId already exists because that means it's an edit
+  async saveComment(commentId, message) {
+    if (message) {
+      let timestamp = getTimestamp();
+
+      // ? Still unsure if I should add "commentId: commentId" as a field since the ID of the document is being set to the commentId
+      let commentData = {
+        userId: this.userDocData.userid,
+        userName: this.userDocData.username,
+        message: message,
+        timestamp: timestamp
+      };
+
+      // Promise returns void
+      await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc(commentId).set(commentData)
       .catch((error) => {
-        console.error("Failed to add document: " + error);
+        console.error("Error in adding new comment: " + error);
+        return false;
       });
+
+      // Successfully resolved promise
+      console.log("Comment successfully saved.");
+      return true;
+    }
+    else {
+      console.log("No message to be saved.");
+      return false;
     }
   }
 
@@ -114,23 +158,6 @@ class CommentList extends Component {
     console.log(this.state.commentList);
   }
 
-  // Retriving Document ID of current user
-  async getUser(users) {
-    let docId = null;
-    await users.where("userid", "==", Constants.TestUserId).get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
-          docId = doc.id;
-        });
-      })
-      .catch(function(error) {
-        console.log("Error getting documents: ", error);
-      });
-
-      return docId;
-  }
-
   render() {
     const { commentList } = this.state;
     return (
@@ -141,7 +168,12 @@ class CommentList extends Component {
 
         {/* Rendering all of the comments */}
         {commentList.map((comment) => (
-          <Comment key={comment.id} id={comment.id} deleteComment={this.deleteComment} />
+          <Comment 
+            key={comment.id}
+            id={comment.id} 
+            deleteComment={this.deleteComment} 
+            saveComment={this.saveComment} 
+          />
         ))}
       </div>
     );

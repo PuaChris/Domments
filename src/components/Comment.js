@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import * as Constants from "../constants";
+import * as Constants from "../helper/constants";
 import "./styles/comment.scss";
 
 
@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Comment(props) {
   const id = props.id;
+  const saveComment = props.saveComment;
   const deleteComment = props.deleteComment;
 
   const [message, setMessage] = useState(null);
@@ -26,13 +27,17 @@ function Comment(props) {
     setMessage(event.target.value);
   }
 
+
   // Does not actually save the message
   // TODO: Upon submitting, remove focus away from text area and save the comment
   const handleSubmit = (event) => {
-    console.log("Comment message saved: " + message);
-    event.preventDefault();
+    if (!message || message != "") {
+      event.preventDefault();
+      
+      saveComment(id, message);
+    }
 
-    
+    // TODO: Handle of message is empty
   }
 
   const onClick = () => {
