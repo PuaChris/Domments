@@ -43,7 +43,7 @@ function Comment(props) {
 
     // TODO: Handle of message is empty
   }
-
+  
   const onClick = () => {
     deleteComment(id);
   }
@@ -55,6 +55,7 @@ function Comment(props) {
           noValidate autoComplete="off" 
           onSubmit={handleSubmit}
           >
+            { timestamp } 
             <TextField
               className="comment__message"
               onChange={handleChange}
