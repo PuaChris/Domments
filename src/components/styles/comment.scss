@@ -3,4 +3,21 @@
     color: red;
     width: 14em;
     height: 10em;
+    list-style: none;
 }
+
+.comment__highlight {
+  background-color: rgb(248, 239, 108);
+  color: red;
+  width: 14em;
+  height: 10em;
+  list-style: none;
+  animation: highlight 2s forwards;
+}
+
+@keyframes highlight {
+  from{background-color: rgb(248, 239, 108)}
+  to {background-color: white;}
+}
+
+

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./styles/comment-list.scss";
 
 import Firebase from '../firebase-init';
 import "firebase/firestore";
@@ -7,19 +6,23 @@ import { firestore } from "firebase";
 
 import moment from 'moment';
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 import Comment from "./Comment";
 import CommentListAddBtn from "./CommentListAddBtn";
 import * as Constants from '../helper/constants';
 import { createCommentObj } from '../helper/createCommentObj';
 
+import "./styles/comment-list.scss";
+
 class CommentList extends Component {
   constructor(props) {
     super(props);
 
-    // ? Do I not care about the order of the comments (array) or do I want to keep it the same order (not array)?
     this.state = {
+      mounted: false,
+      isUserLoggedIn: false,
       commentList: [],
-      isUserLoggedIn: false
     };
 
     this.userDocRef = null;
@@ -34,6 +37,9 @@ class CommentList extends Component {
   async componentDidMount() {
     await this.initializeDb();
     this.getComments();
+    this.setState({
+      mounted: true
+    });
   }
 
   async initializeDb() {
@@ -49,9 +55,7 @@ class CommentList extends Component {
     // TODO: See what website the user is currently on and check that against the website collection
     // TODO: Get doc reference to the user's current website for easier referencing
     if (userDocId) {
-      this.setState({
-        isUserLoggedIn: true
-      });
+      this.setState({ isUserLoggedIn: true });
 
       this.userDocRef = users.doc(userDocId);
       this.userDocData = (await this.userDocRef.get()).data();
@@ -114,9 +118,8 @@ class CommentList extends Component {
       commentList.push(commentListItem);
     });
 
-    this.setState(() => ({
-        commentList: commentList
-      }), () => console.log("Retrieved " + commentList.length + " comments from: " + website),
+    this.setState({ commentList: commentList }, () => 
+      console.log("Retrieved " + commentList.length + " comments from: " + website),
     );
   }
 
@@ -137,9 +140,8 @@ class CommentList extends Component {
     let newCommentList = this.state.commentList;
     newCommentList.unshift(commentListItem);
 
-    this.setState((prevState) => ({
-        commentList: newCommentList
-      }), () => console.log("Successfully added new comment."),
+    this.setState({commentList: newCommentList}, () => 
+      console.log("Successfully added new comment.")
     );
   }
 
@@ -175,21 +177,18 @@ class CommentList extends Component {
       let updatedCommentList = this.state.commentList;
 
       // Update timestamp in state instead of retrieving from the database to reduce the number of reads needed
-      updatedCommentList.forEach((comment, index) => {
-        if (comment.id === id) {
-          comment.timestamp = moment(currentTimestamp.toMillis()).format('lll');
-          updatedCommentList.splice(index, 1);
-          updatedCommentList.unshift(comment);
-        }
-      });
+      let matchingComment = updatedCommentList.find((comment) => comment.id === id);
+      matchingComment.timestamp = moment(currentTimestamp.toMillis()).format('lll');
 
-      this.setState(
-        (prevState) => ({
-          commentList: updatedCommentList
-        })
+      let matchingIndex = updatedCommentList.indexOf(matchingComment);
+      updatedCommentList.splice(matchingIndex, 1);
+
+      updatedCommentList.unshift(matchingComment);
+
+      this.setState({ commentList: updatedCommentList }, () => 
+        console.log("Comment successfully saved.")
       );
 
-      console.log("Comment successfully saved.");
       return true;
     }
     else {
@@ -223,26 +222,32 @@ class CommentList extends Component {
 
 
   render() {
-    const { commentList } = this.state;
+    let { mounted, commentList } = this.state;
+    const CommentListAddBtnVariants = Constants.CommentListAddBtnVariants;
     return (
-      <div className="comment-list">
-        <div className="comment-list__btn--space">
-          <CommentListAddBtn addComment={this.addComment} />
-        </div>
+      <div className="container">
+        <motion.div 
+          className="comment-list__btn--space"
+          initial={false}
+          animate={mounted ? "show" : "hide"}
+          variants={CommentListAddBtnVariants}
+        >
+            <CommentListAddBtn addComment={this.addComment} />
+        </motion.div>
 
         {/* Rendering all of the comments */}
-        {commentList.map((commentItem) => (
-          <Comment 
-            key={commentItem.id}
-            id={commentItem.id} 
-            userId={commentItem.userId}
-            userName={commentItem.userName}
-            message={commentItem.message}
-            timestamp={commentItem.timestamp}
-            deleteComment={this.deleteComment} 
-            saveComment={this.saveComment} 
-          />
-        ))}
+        <div className="comment-list">
+          <AnimatePresence>
+            {commentList.map((commentItem) => (
+              <Comment 
+                  key={commentItem.id}
+                  commentItem={commentItem}
+                  deleteComment={this.deleteComment} 
+                  saveComment={this.saveComment} 
+              />
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
     );
   }
