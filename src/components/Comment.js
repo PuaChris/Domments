@@ -52,8 +52,6 @@ function Comment(props) {
       }, 3000);
       clearTimeout(timer);
     }
-
-    // TODO: Handle of message is empty
   }
   
   const handleDelete = () => {

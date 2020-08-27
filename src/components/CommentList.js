@@ -25,9 +25,10 @@ class CommentList extends Component {
       commentList: [],
     };
 
-    this.userDocRef = null;
-    this.userDocData = null;
-    this.websiteCollection = null;
+    this.websiteRootUrl = window.location.host;
+
+    this.userId = null;
+    this.userName = null;
 
     this.addComment = this.addComment.bind(this);
     this.saveComment = this.saveComment.bind(this);
@@ -35,96 +36,65 @@ class CommentList extends Component {
   }
 
   async componentDidMount() {
-    await this.initializeDb();
+    await this.initializeUser();
     this.getComments();
     this.setState({
       mounted: true
     });
   }
 
-  async initializeDb() {
-    // Checking to see if user exists and getting their ID to be used for referencing when adding a new comment
-    const users = Firebase.firestore().collection("users");
+  async initializeUser() {
+    const url = new URL('http://localhost:4000/user');
+    await fetch(url, {
+      method: 'GET',
+    })
+      .then(res => res.json())
+      .then(
+        (result) => {
+          if (result === null || result === undefined){
+            console.log("User does not exist");
+            return;
+          }
 
-    let userDocId = await this.getUser(users)
-      .catch((error) => {
-        console.error("Error in trying to get current user's Document reference: " + error);
-      });
-
-    // Check user's collection of websites 
-    // TODO: See what website the user is currently on and check that against the website collection
-    // TODO: Get doc reference to the user's current website for easier referencing
-    if (userDocId) {
-      this.setState({ isUserLoggedIn: true });
-
-      this.userDocRef = users.doc(userDocId);
-      this.userDocData = (await this.userDocRef.get()).data();
-
-      this.websiteCollection = this.userDocRef.collection("websites");
-
-      let querySnapshot = await this.websiteCollection.get()
-        .catch((error) => {
-          console.error("Error in getting user's 'websites' collection: " + error);
-        });
-
-        if (querySnapshot.empty) {
-          console.log("User has no websites in their collection.");
+          this.setState({
+            isUserLoggedIn: true
+          });
+          this.userId = result.userDocData.userid;
+          this.userName = result.userDocData.username;
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          console.error("Error in retrieving user data -> " + error);
         }
-        else {
-          console.log("User has websites in their collection.");
-        }
-
-    }
-    else {
-      console.log("User does not exist");
-    }
-  }
-
-  // Retriving Document ID of current user
-  async getUser(users) {
-    let docId = null;
-
-    let querySnapshot = await users.where("userid", "==", Constants.TestUserId)
-      .get()
-      .catch(function(error) {
-        console.error("Error getting documents: ", error);
-      });
-
-    // Should only return one user
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      docId = doc.id;
-    });
-
-    return docId;
+      )
   }
 
   async getComments() {
     // Checks which website they are on and pull comments 
-    let website = Constants.TestWebsite;
-    let commentList = [];
+    let url = new URL('http://localhost:4000/comments');
+    url.search = new URLSearchParams({ 
+      userId: this.userId,
+      userName: this.userName,
+      website: this.websiteRootUrl,
+     });
 
-    // Retrieve all comments sorted by their timestamps in descending order (i.e. most recent displayed on top)
-    let allCommentsFromDb = await this.websiteCollection.doc(website).collection("comments").orderBy('timestamp','desc').get();
-    allCommentsFromDb.forEach((doc) => {
-      let commentListItem = createCommentObj (
-        doc.id, 
-        this.userDocData.userid, 
-        this.userDocData.username,
-        doc.data().message, 
-        moment(doc.data().timestamp.toMillis()).format('lll') // Format e.g. Aug 17, 2020 3:42 PM
+    await fetch(url, {
+      method: "GET",
+    })
+    .then(data => data.json())
+    .then((commentList) => {
+      console.log(commentList);
+      this.setState({ commentList: commentList }, () => 
+        console.log("Retrieved " + commentList.length + " comments from: " + this.websiteRootUrl),
       );
-      
-      commentList.push(commentListItem);
-    });
-
-    this.setState({ commentList: commentList }, () => 
-      console.log("Retrieved " + commentList.length + " comments from: " + website),
-    );
+    })
   }
 
   async addComment() {
-    const newCommentId = await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc().id;
+    const website = this.websiteRootUrl;
+    const newCommentId = await this.websiteCollection.doc(website).collection("comments").doc().id;
     const emptyMessage = "";
     const emptyTimestamp = null;
 
@@ -154,15 +124,13 @@ class CommentList extends Component {
  * 6. Inside saveComment(), it's going to save the ID, message, user, and timestamp as a comment *
  */
 
-  // TODO: Check which website they are currently on and add a comment in a sub-collection
-  // TODO: If website does not exist in the collection, add a new one using .set()
-  // TODO: Check to see if commentId already exists because that means it's an edit
   async saveComment(id, message) {
     if (message) {
+      const website = this.websiteRootUrl;
       const currentTimestamp = firestore.Timestamp.now();
 
       // No need to save ID because it's automatically generated by Firestore as the key, which is what is used to identify each unique comment
-      await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc(id).set({
+      await this.websiteCollection.doc(website).collection("comments").doc(id).set({
         userId: this.userDocData.userid,
         userName: this.userDocData.username,
         message: message,
@@ -198,19 +166,21 @@ class CommentList extends Component {
   }
 
   async deleteComment(id) {
+    const website = this.websiteRootUrl;
+
     this.setState(
       (prevState) => ({
         commentList: prevState.commentList.filter((commentItem) => commentItem.id !== id)
       })
     );
 
-    let commentRef = await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc(id).get()
+    let commentRef = await this.websiteCollection.doc(website).collection("comments").doc(id).get()
       .catch((error) => {
         console.error("Error in retrieving document to be deleted: " + error);
       });
       
     if (commentRef) {
-      await this.websiteCollection.doc(Constants.TestWebsite).collection("comments").doc(id).delete()
+      await this.websiteCollection.doc(website).collection("comments").doc(id).delete()
         .catch((error) => {
           console.error("Error in deleting document from database: " + error);
         });
