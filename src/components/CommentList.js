@@ -40,7 +40,7 @@ class CommentList extends Component {
   async componentDidMount() {
     await this.initializeUser();
     if (this.state.isUserLoggedIn){
-      console.log("Requesting comments...");
+      console.log(`Requesting comments...`);
       this.getComments(); 
     }
     this.setState({
@@ -73,7 +73,7 @@ class CommentList extends Component {
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-          console.error("Error in retrieving user data -> " + error);
+          console.error(`Error in retrieving user data -> ${error}`);
         }
       );
   }
@@ -94,7 +94,7 @@ class CommentList extends Component {
     .then(data => data.json())
     .then((commentList) => {
         this.setState({ commentList: commentList }, () => 
-          console.log(`Retrieved ${commentList.length} comments for ${this.websiteHost}`),
+          console.log(`Retrieved ${commentList.length} comments for ${this.websiteHost} \n`),
         );
       },
       (error) => {
@@ -125,7 +125,7 @@ class CommentList extends Component {
         commentId = newCommentId;
       },
       (error) => {
-        console.error("Error in retrieving new comment ID -> " + error);
+        console.error(`Error in retrieving new comment ID ->  ${error}`);
       }
     );
 
@@ -142,7 +142,7 @@ class CommentList extends Component {
     newCommentList.unshift(commentListItem);
 
     this.setState({commentList: newCommentList}, () => 
-      console.log("Successfully added new comment.")
+      console.log(`Successfully added new comment.`)
     );
   }
 
@@ -196,18 +196,18 @@ class CommentList extends Component {
           }
 
           this.setState({ commentList: updatedCommentList }, () => 
-            console.log("Comment successfully saved.")
+            console.log(`Comment successfully saved.`)
           );
         },
         (error) => {
-          console.error("Error in saving comment " + commentId + " -> " + error);
+          console.error(`Error in saving comment ${commentId} -> ${error}`);
         }
       );
 
       return true;
     }
     else {
-      console.log("No message to be saved.");
+      console.log(`No message to be saved.`);
       return false;
     }
   }
@@ -244,11 +244,11 @@ class CommentList extends Component {
           );  
         }
         else {
-          console.error("Error in deleting comment " + commentId + " -> Status: " + res.status); 
+          console.error(`Error in deleting comment ${commentId} -> Status: ${res.status}`); 
         }
       },
       (error) => {
-        console.error("Error in deleting comment " + commentId + " -> " + error);
+        console.error(`Error in deleting comment ${commentId} -> ${error}`);
       }
     );
   }
