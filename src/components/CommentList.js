@@ -1,15 +1,10 @@
 import React, { Component } from "react";
 
-import Firebase from '../firebase-init';
-import "firebase/firestore";
-import { firestore } from "firebase";
-
 import moment from 'moment';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Comment from "./Comment";
-import CommentListAddBtn from "./CommentListAddBtn";
 import * as Constants from '../helper/constants';
 import { createCommentObj } from '../helper/createCommentObj';
 
@@ -146,15 +141,6 @@ class CommentList extends Component {
     );
   }
 
-  /*
- 1. User has a comment they want to save. It is stored in 'message' hook. 
- 2. User presses 'Comment' button. handleSubmit() is called. 
- 3. saveComment() is passed down from CommentList.js -> Comment.js so it can be called inside handleSubmit()
- 4. saveComment() takes in the Comment ID and message (so we know which Comment we're saving the message too)
- 5. We already checked for the user auth upon start up just add the user's name as the commenter
- * 6. Inside saveComment(), it's going to save the ID, message, user, and timestamp as a comment *
- */
-
   async saveComment(commentId, message) {
     if (message) {
       const website = this.websiteHost;
@@ -179,10 +165,6 @@ class CommentList extends Component {
           // Update timestamp in state instead of retrieving from the database to reduce the number of reads needed
           let matchingComment = updatedCommentList.find((comment) => comment.id == commentId);
           let matchingIndex = updatedCommentList.indexOf(matchingComment);
-
-          // updatedCommentList[matchingIndex].id = commentData.commentId;
-          // updatedCommentList[matchingIndex].message = message;
-          // updatedCommentList[matchingIndex].timestamp = moment(commentData.timestamp).format('lll');
 
           matchingComment.id = commentData.commentId;
           matchingComment.message = message;
@@ -265,7 +247,14 @@ class CommentList extends Component {
           animate={mounted ? "show" : "hide"}
           variants={CommentListAddBtnVariants}
         >
-            <CommentListAddBtn addComment={this.addComment} />
+            <motion.button 
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.8 }}
+              type="button" 
+              className="comment-list__add-btn" 
+              onClick={this.addComment}>
+            +
+          </motion.button>
         </motion.div>
 
         {/* Rendering all of the comments */}
