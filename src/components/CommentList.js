@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import moment from 'moment';
 
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Comment from "./Comment";
@@ -17,34 +19,40 @@ class CommentList extends Component {
     this.state = {
       mounted: false,
       isUserLoggedIn: false,
+      userData: {
+        userDocId: null,
+        userId: null,
+        userName: null,
+      },
+      websiteHost: window.location.host,
       commentList: [],
     };
 
-    this.websiteHost = window.location.host;
-    this.userData = {
-      userDocId: null,
-      userId: null,
-      userName: null,
-    }
+    this.handleLoginChange = this.handleLoginChange.bind(this);
+    this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 
     this.addComment = this.addComment.bind(this);
     this.saveComment = this.saveComment.bind(this);
     this.deleteComment = this.deleteComment.bind(this);
+
+    this.classes = makeStyles((theme) => ({
+      root: {
+        '& .MuiTextField-root': {
+          margin: theme.spacing(1),
+          width: '25ch',
+        },
+      },
+    }));
   }
 
   async componentDidMount() {
-    await this.initializeUser();
-    if (this.state.isUserLoggedIn){
-      console.log(`Requesting comments...`);
-      this.getComments(); 
-    }
     this.setState({
       mounted: true
     });
   }
 
   async initializeUser() {
-    const userId = 'test';
+    const { userId } = this.state.userData;
     const url = new URL(`http://localhost:4000/users/${userId}`);
     await fetch(url, {
       method: 'GET',
@@ -53,16 +61,15 @@ class CommentList extends Component {
       .then(
         (result) => {
           if (result === null || result === undefined){
-            console.log("User does not exist");
             return;
           }
-
           this.setState({
-            isUserLoggedIn: true
+            isUserLoggedIn: true,
+            userData: {
+              userDocId: result.userDocId,
+              userName: result.userDocData.username,
+            }
           });
-          this.userData.userDocId = result.userDocId;
-          this.userData.userId = result.userDocData.userid;
-          this.userData.userName = result.userDocData.username;
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -73,14 +80,39 @@ class CommentList extends Component {
       );
   }
 
+  handleLoginChange(event) {
+    this.setState({
+      userData: {
+        userId: event.target.value 
+      } 
+    });
+  }
+
+  async handleLoginSubmit (event) {
+    console.log(`Processing login...`);
+    const  { userId } = this.state.userData;
+
+    if (!userId || userId !== ""){
+      event.preventDefault();
+
+      // Retrieve user data from database
+      await this.initializeUser();
+
+      if (this.state.isUserLoggedIn){
+        console.log(`Login complete. Requesting comments...`);
+        this.getComments(); 
+      }
+    }
+  }
+
   async getComments() {
-    const website = this.websiteHost;
-    const userId = this.userData.userId;
+    const { userId, userDocId, userName } = this.state.userData;
+    const website = this.state.websiteHost;
 
     const url = new URL(`http://localhost:4000/users/${userId}/website/${website}/comments`);
     url.search = new URLSearchParams({ 
-      userDocId: this.userData.userDocId,
-      userName: this.userData.userName,
+      userDocId: userDocId,
+      userName: userName,
     });
 
     await fetch(url, {
@@ -89,7 +121,7 @@ class CommentList extends Component {
     .then(data => data.json())
     .then((commentList) => {
         this.setState({ commentList: commentList }, () => 
-          console.log(`Retrieved ${commentList.length} comments for ${this.websiteHost} \n`),
+          console.log(`Retrieved ${commentList.length} comments for ${website} \n`),
         );
       },
       (error) => {
@@ -99,12 +131,12 @@ class CommentList extends Component {
   }
 
   async addComment() {
-    const userId = this.userData.userId;
-    const website = this.websiteHost;
+    const { userId, userDocId, userName } = this.state.userData;
+    const website = this.state.websiteHost;
 
     const url = new URL(`http://localhost:4000/users/${userId}/website/${website}/comments/newid`);
     url.search = new URLSearchParams({ 
-      userDocId: this.userData.userDocId,
+      userDocId: userDocId,
       website: website
     });
 
@@ -126,8 +158,8 @@ class CommentList extends Component {
 
     const commentListItem = createCommentObj (
       commentId,
-      this.userData.userId,
-      this.userData.userName,
+      userId,
+      userName,
       emptyMessage,
       emptyTimestamp
     );
@@ -143,14 +175,14 @@ class CommentList extends Component {
 
   async saveComment(commentId, message) {
     if (message) {
-      const website = this.websiteHost;
-      const userId = this.userData.userId;
+      const { userId, userDocId, userName } = this.state.userData;
+      const website = this.state.websiteHost;
         
       const url = new URL('http://localhost:4000/users/' + userId + '/website/' + website + '/comments/' + commentId);
   
       url.search = new URLSearchParams({ 
-        userDocId: this.userData.userDocId,
-        userName: this.userData.userName,
+        userDocId: userDocId,
+        userName: userName,
         message: message
       });
 
@@ -163,14 +195,14 @@ class CommentList extends Component {
           let updatedCommentList = this.state.commentList;
           
           // Update timestamp in state instead of retrieving from the database to reduce the number of reads needed
-          let matchingComment = updatedCommentList.find((comment) => comment.id == commentId);
+          let matchingComment = updatedCommentList.find((comment) => comment.id === commentId);
           let matchingIndex = updatedCommentList.indexOf(matchingComment);
 
           matchingComment.id = commentData.commentId;
           matchingComment.message = message;
           matchingComment.timestamp = moment(commentData.timestamp).format('lll');
 
-          matchingComment = updatedCommentList.find((comment) => comment.id == commentData.commentId);
+          matchingComment = updatedCommentList.find((comment) => comment.id === commentData.commentId);
 
           if (matchingIndex !== 0){
             updatedCommentList.splice(matchingIndex, 1);
@@ -205,12 +237,12 @@ class CommentList extends Component {
       return;
     }
 
-    const userId = this.userData.userId;
-    const website = this.websiteHost;
+    const { userId, userDocId } = this.state.userData;
+    const website = this.state.websiteHost;
 
     const url = new URL('http://localhost:4000/users/' + userId + '/website/' + website + '/comments/' + commentId);
     url.search = new URLSearchParams({ 
-      userDocId: this.userData.userDocId,
+      userDocId: userDocId
     });
 
     await fetch(url, {
@@ -235,43 +267,82 @@ class CommentList extends Component {
     );
   }
 
-
   render() {
-    let { mounted, commentList } = this.state;
+    let { mounted, isUserLoggedIn, commentList } = this.state;
     const CommentListAddBtnVariants = Constants.CommentListAddBtnVariants;
-    return (
-      <div className="container">
-        <motion.div 
-          className="comment-list__btn--space"
+    
+    if (!isUserLoggedIn) {
+      return (
+        <motion.div
+          className="comment-list__login-container"
           initial={false}
           animate={mounted ? "show" : "hide"}
           variants={CommentListAddBtnVariants}
         >
-            <motion.button 
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.8 }}
-              type="button" 
-              className="comment-list__add-btn" 
-              onClick={this.addComment}>
-            +
-          </motion.button>
+          <form
+            className={this.classes.root}
+            noValidate
+            autoComplete="off"
+            onSubmit={this.handleLoginSubmit}
+          >
+            <TextField
+              className="comment-list__login-form"
+              onChange={this.handleLoginChange}
+              label="Login"
+              placeholder="Enter new/existing username here"
+              multiline
+              margin="normal"
+              size="small"
+              rows={4}
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <input
+              type="submit"
+              value="Login"
+            />
+          </form>
         </motion.div>
+      )
+    }
 
-        {/* Rendering all of the comments */}
-        <div className="comment-list">
-          <AnimatePresence>
-            {commentList.map((commentItem) => (
-              <Comment 
-                  key={commentItem.id}
-                  commentItem={commentItem}
-                  deleteComment={this.deleteComment} 
-                  saveComment={this.saveComment} 
-              />
-            ))}
-          </AnimatePresence>
+    else {
+      return (
+        <div className="comment-list__container">
+          <motion.div 
+            className="comment-list__btn-container"
+            initial={false}
+            animate={mounted ? "show" : "hide"}
+            variants={CommentListAddBtnVariants}
+          >
+              <motion.button 
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.8 }}
+                type="button" 
+                className="comment-list__add-btn" 
+                onClick={this.addComment}>
+              +
+            </motion.button>
+          </motion.div>
+
+          {/* Rendering all of the comments */}
+          <div className="comment-list__comments">
+            <AnimatePresence>
+              {commentList.map((commentItem) => (
+                <Comment 
+                    key={commentItem.id}
+                    commentItem={commentItem}
+                    deleteComment={this.deleteComment} 
+                    saveComment={this.saveComment} 
+                />
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 

@@ -1,8 +1,15 @@
-.comment-list {
+.comment-list__login-form {
+  background-color: white;
+  color: red;
+  width: 14em;
+  height: 10em;
+  list-style: none;
+}
+
+.comment-list__comments {
     display: flex;
     flex-direction: column;
 }
 
-.comment-list__btn-space {
-}
+
 

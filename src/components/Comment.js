@@ -5,7 +5,6 @@ import TextField from '@material-ui/core/TextField';
 
 import { motion } from 'framer-motion';
 
-import * as Constants from "../helper/constants";
 import "./styles/comment.scss";
 
 
@@ -39,7 +38,7 @@ function Comment(props) {
 
   // TODO: Upon submitting, remove focus away from text area
   const handleSave = async (event) => {
-    if (!message || message != "") {
+    if (!message || message !== "") {
       event.preventDefault();
       if (isCommentSaving === true){
         setCommentSavingStatus(false);
@@ -69,14 +68,16 @@ function Comment(props) {
           <div>
             <form 
               className={classes.root} 
-              noValidate autoComplete="off" 
+              noValidate
+              autoComplete="off" 
               onSubmit={handleSave} 
             >
               { timestamp } 
               <TextField
                 className="comment__message"
                 onChange={handleChange}
-                label={userName}
+                // TODO: Add names to comments 
+                // label={userName}
                 defaultValue={message}
                 placeholder="Enter comment here"
                 multiline
