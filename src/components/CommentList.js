@@ -92,7 +92,7 @@ class CommentList extends Component {
     console.log(`Processing login...`);
     const  { userId } = this.state.userData;
 
-    if (!userId || userId !== ""){
+    if (userId && userId !== ""){
       event.preventDefault();
 
       // Retrieve user data from database
@@ -102,6 +102,9 @@ class CommentList extends Component {
         console.log(`Login complete. Requesting comments...`);
         this.getComments(); 
       }
+    }
+    else {
+      console.log(`Invalid userId.`);
     }
   }
 
@@ -174,7 +177,7 @@ class CommentList extends Component {
   }
 
   async saveComment(commentId, message) {
-    if (message) {
+    if (message && message !== "") {
       const { userId, userDocId, userName } = this.state.userData;
       const website = this.state.websiteHost;
         
@@ -277,7 +280,6 @@ class CommentList extends Component {
           className="comment-list__login-container"
           initial={false}
           animate={mounted ? "show" : "hide"}
-          variants={CommentListAddBtnVariants}
         >
           <form
             className={this.classes.root}
@@ -285,24 +287,28 @@ class CommentList extends Component {
             autoComplete="off"
             onSubmit={this.handleLoginSubmit}
           >
-            <TextField
-              className="comment-list__login-form"
-              onChange={this.handleLoginChange}
-              label="Login"
-              placeholder="Enter new/existing username here"
-              multiline
-              margin="normal"
-              size="small"
-              rows={4}
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <input
-              type="submit"
-              value="Login"
-            />
+            <div className="comment-list__login-form-container">
+              <TextField
+                className="comment-list__login-form"
+                onChange={this.handleLoginChange}
+                label="Login"
+                placeholder="Enter new/existing username here"
+                multiline
+                margin="normal"
+                size="small"
+                rows={2}
+                variant="outlined"
+                autofocus
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <input
+                className="comment-list__login-btn"
+                type="submit"
+                value="Login"
+              />
+            </div>
           </form>
         </motion.div>
       )

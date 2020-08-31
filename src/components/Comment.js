@@ -36,21 +36,18 @@ function Comment(props) {
     setMessage(event.target.value);
   }
 
-  // TODO: Upon submitting, remove focus away from text area
   const handleSave = async (event) => {
-    if (!message || message !== "") {
-      event.preventDefault();
-      if (isCommentSaving === true){
-        setCommentSavingStatus(false);
-      }
-      await saveComment(id, message);
-      setCommentSavingStatus(true);
-
-      const timer = setTimeout(() => {
-        setCommentSavingStatus(isCommentSaving => !isCommentSaving)
-      }, 3000);
-      clearTimeout(timer);
+    event.preventDefault();
+    if (isCommentSaving === true){
+      setCommentSavingStatus(false);
     }
+    await saveComment(id, message);
+    setCommentSavingStatus(true);
+
+    const timer = setTimeout(() => {
+      setCommentSavingStatus(isCommentSaving => !isCommentSaving)
+    }, 3000);
+    clearTimeout(timer);
   }
   
   const handleDelete = () => {
@@ -60,44 +57,57 @@ function Comment(props) {
 
   return (
       <motion.li 
-        className={isCommentSaving ? "comment__highlight" : "comment" }
+        className={ "comment" }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-          <div>
+          <div className="comment__container">
             <form 
               className={classes.root} 
               noValidate
               autoComplete="off" 
               onSubmit={handleSave} 
             >
-              { timestamp } 
-              <TextField
-                className="comment__message"
-                onChange={handleChange}
-                // TODO: Add names to comments 
-                // label={userName}
-                defaultValue={message}
-                placeholder="Enter comment here"
-                multiline
-                margin="normal"
-                size="small"
-                rows={4}
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <input
-                type="submit"
-                value="Comment"
-              />
+              <div className="comment__timestamp-container">
+                <span className="comment__timestamp">
+                  { timestamp } 
+                </span>
+              </div>
+              <div className="comment__message-container">
+                <TextField
+                  className="comment__message"
+                  onChange={handleChange}
+                  // TODO: Add names to comments 
+                  // label={userName}
+                  defaultValue={message}
+                  placeholder="Enter comment here"
+                  multiline
+                  margin="normal"
+                  rows={3}
+                  fullWidth
+                  variant="outlined"
+                  autoFocus 
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <div className="comment__btn-container">
+                  <input
+                    className="comment__submit-btn"
+                    type="submit"
+                    value="Comment"
+                  />
+                  <button
+                    className="comment__delete-btn" 
+                    type="button" 
+                    onClick={handleDelete}>
+                    <i className="far fa-trash-alt" />
+                  </button>
+                </div>
+              </div>
             </form>
 
-            <button type="button" onClick={handleDelete}>
-              <i className="far fa-trash-alt" />
-            </button>
           </div>
 
       </motion.li>

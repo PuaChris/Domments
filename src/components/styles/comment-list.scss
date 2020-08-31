@@ -1,14 +1,73 @@
-.comment-list__login-form {
+
+.comment-list__login-container {
+  padding: 0.3em;
   background-color: white;
-  color: red;
-  width: 14em;
-  height: 10em;
-  list-style: none;
+  color: #202020;
+  width: 13em;
+  height: 7em;
+  border: 1.5px solid rgba(0, 0, 0, 0.144);
+  border-radius: 0.5em;
+  box-shadow:
+  0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+  0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+  0 12.5px 10px rgba(0, 0, 0, 0.06),
+  0 22.3px 17.9px rgba(0, 0, 0, 0.072);
+
+  position: absolute;
+  left: 34%;
+  top: 6%;
+}
+
+.comment-list__login-form-container {
+  height: 1em;
+}
+
+.comment-list__login-form {
+  // Changes width of TextField
+  font-size: 0.9em;
+  outline: none;
 }
 
 .comment-list__comments {
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+
+.comment-list__login-btn {
+  text-decoration: none;
+  box-sizing: border-box;
+  background: white;
+  border: 1.5px solid #2979FF;
+  border-radius: 6px; 
+  color: #2979FF;
+  width: 12em;
+  outline: none;
+}
+
+.comment-list__login-btn:active {
+  background-color: #2979FF;
+  color: white;
+}
+
+.comment-list__add-btn {
+  margin: 0.3em;
+  text-decoration: none;
+  box-sizing: border-box;
+  background: #2979FF;
+  border: 1.5px solid #2979FF;
+  border-radius: 6px; 
+  color: white;
+  width: 1.8em;
+  height: 1.5em;
+  outline: none;
+  font-weight: bold;
+  font-size: larger;
+}
+
+.comment-list__add-btn:active {
+  background-color: #2979FF;
+  color: white;
 }
 
 
