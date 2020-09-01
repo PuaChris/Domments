@@ -8,5 +8,5 @@
     "default_icon": "logo512.png",
     "default_popup": "index.html"
   },
-  "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://kit.fontawesome.com/c4df183215.js https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
 }
