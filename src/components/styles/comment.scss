@@ -113,10 +113,10 @@
   outline: none;
 
   &:hover {
-    background: linear-gradient(90deg, rgba(117,94,220,1) 0%, rgba(154,66,240,1) 100%);
+    background-color: #9a42f0;
     color: white; 
     border: none;
-    transition: 150ms ease-in;
+    transition: 200ms ease-in-out;
   }
 }
 
