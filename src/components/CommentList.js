@@ -263,11 +263,17 @@ class CommentList extends Component {
 
   render() {
     let { mounted, isUserLoggedIn, commentList } = this.state;
-    const CommentListAddBtnVariants = Constants.CommentListAddBtnVariants;
 
     if (!isUserLoggedIn) {
       return (
         <div className="comment-list__container">
+          <div className="comment-list__login-header">
+            <div className="comment-list__login-header-container">
+              <span>
+                Account Information
+              </span>
+            </div>
+          </div>
           <motion.div
             className="comment-list__login-container"
             initial={false}
@@ -284,7 +290,7 @@ class CommentList extends Component {
                   <div className="comment-list__login-form-username-header">
                     <span>Username</span>
                   </div>
-             
+
                   <input
                     className="comment-list__login-form-username"
                     onChange={this.handleLoginChange}
@@ -308,21 +314,20 @@ class CommentList extends Component {
     else {
       return (
         <div className="comment-list__container">
-          <motion.div
-            className="comment-list__btn-container"
-            initial={false}
-            animate={mounted ? "show" : "hide"}
-            variants={CommentListAddBtnVariants}
-          >
-            <motion.button
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.8 }}
-              type="button"
-              className="comment-list__add-btn"
-              onClick={this.addComment}>
-              +
-            </motion.button>
-          </motion.div>
+          <div className="comment-list__comments-header">
+            <div className="comment-list__comments-header-container">
+              <span>
+                Comments ({commentList.length})
+              </span>
+              <button
+                className="comment-list__add-btn"
+                type="button"
+                onClick={this.addComment}
+              >
+                <i class="fa fa-plus fa-3x"></i>
+              </button>
+            </div>
+          </div>
 
           {/* Rendering all of the comments */}
           <div className="comment-list__comments">

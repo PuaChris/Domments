@@ -5,13 +5,44 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap');
 
+
+.comment-list__container {
+  background-color: #E1E7EC;
+  height: 100vh;
+  font-family: 'Rubik', sans-serif;
+}
+
+.comment-list__login-header {
+  width: 100%;
+  height: 60px;
+  padding: 0;
+
+  color: white;
+  background: linear-gradient(90deg, #755edc 0%, #9a42f0 100%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.comment-list__login-header-container {
+  width: 350px;
+
+  font-size: 25px;
+  font-weight: 500;
+
+  padding: 5px 25px;  
+  text-align: center;
+
+}
+
+
 .comment-list__login-container {
-  position: absolute;
-  left: 10%;
-  top: 6%;
+  margin: 30px auto;
 
   background-color: white;
-  margin: 0.3em;
+  
   color: #202020;
   width: 22em;
   min-height: 16.5em;
@@ -19,7 +50,6 @@
   box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 
               0 6.7px 5.3px rgba(0, 0, 0, 0.048);
 
-  
 }
 
 .comment-list__login-form {
@@ -40,8 +70,6 @@
 
 .comment-list__login-form-username-container {
   width: 100%;
-  font-family: 'Rubik', sans-serif;
-
 }
 
 .comment-list__login-form-username-header {
@@ -81,11 +109,6 @@
   }
 }
 
-.comment-list__comments {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
 .comment-list__login-btn {
   text-decoration: none;
@@ -112,33 +135,50 @@
     background:white;
     color:#9a42f0;
     border: 2px solid #9a42f0;
-    // transition: 200ms ease;
-  }
-  
+  }  
 }
 
-.comment-list__container {
-  background-color: #E1E7EC;
-  height: 900px;
+.comment-list__comments-header {
+  width: 100%;
+  height: 60px;
+  padding: 0;
+
+  color: white;
+  background: linear-gradient(90deg, #755edc 0%, #9a42f0 100%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment-list__comments-header-container {
+  width: 350px;
+
+  font-size: 25px;
+  font-weight: 500;
+
+  padding: 5px 25px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-list__comments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .comment-list__add-btn {
-  margin: 0.3em;
-  text-decoration: none;
-  box-sizing: border-box;
-  background: #2979FF;
-  border: 1.5px solid #2979FF;
-  border-radius: 6px; 
+  border: none;
+  background: none;
   color: white;
-  width: 1.8em;
-  height: 1.5em;
-  outline: none;
-  font-weight: bold;
-  font-size: larger;
 
-  &:active {
-    background-color: #2979FF;
-    color: white;
+  &:hover {
+    color:#FACB63;
+    transition: 200ms ease-in-out;
   }
 }
 

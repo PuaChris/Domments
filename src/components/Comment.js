@@ -64,6 +64,7 @@ function Comment(props) {
       >
           <div className="comment__container">
             <form 
+              spellCheck="false"
               noValidate
               autoComplete="off" 
               className="comment__form"
@@ -88,22 +89,15 @@ function Comment(props) {
                   // label={userName}
                   defaultValue={message}
                   placeholder="Enter comment here"
-                  multiline
                   margin="normal"
                 />
               </div>
               <div className="comment__btn-container">
                   <input
-                    className="comment__submit-btn"
+                    className="comment__save-btn"
                     type="submit"
                     value="Save"
                   />
-                  {/* <button
-                    className="comment__delete-btn" 
-                    type="button" 
-                    onClick={handleDelete}>
-                    <i className="far fa-trash-alt" />
-                  </button> */}
               </div>
             </form>
 

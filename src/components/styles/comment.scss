@@ -6,12 +6,23 @@
 
 .comment__container {
   background-color: white;
-  margin: 0.3em;
   color: #202020;
+
+  margin: 11px;
+
   width: 22em;
   min-height: 16.5em;
   border-radius: 6px;
   box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048);
+}
+
+.comment-list__comments-header {
+  height: 40px;
+
+  color: white;
+  background: linear-gradient(90deg, #755edc 0%, #9a42f0 100%);
+
+  padding-top: 15px;  
 }
 
 .comment__form {
@@ -26,6 +37,7 @@
   padding: 10px 10px 6px 10px;
   height: 30px;
 }
+
 .comment__timestamp{
   text-align: right;
   vertical-align: bottom;
@@ -33,6 +45,23 @@
   font-family: 'Rubik', sans-serif;
   font-weight: 500;
   padding: 5px 0 0 14px;
+}
+
+.comment__delete-btn {
+  text-decoration: none;
+  box-sizing: border-box;
+  background: white;
+  border: none;
+  color: #b8bbbe;
+  width: 3.5em;
+  outline: none;
+  transition: 150ms ease-in-out;
+
+  &:hover {
+    color:#9a42f0;
+    transition: 150ms ease-in-out;
+  }
+
 }
 
 .comment__message-container {  
@@ -48,16 +77,16 @@
   width: 86%;
   resize: none;
   border: none;
-  padding: 8px 0;
+  padding: 8px 10px;
   line-height: 1.5;
 
   &:focus{
     outline: none;
     border: 2.5px solid #8750E6;
     border-radius: 4px;
+    padding: 6px 6px;
   }
 }
-
 
 .comment__btn-container {
   display: flex;
@@ -65,47 +94,30 @@
   margin-left: 24px;
 }
 
-.comment__submit-btn {
+.comment__save-btn {
   text-decoration: none;
   font-size: 18px;
   font-family: 'Rubik', sans-serif;
   font-weight: 500;
-  color: white;
 
   box-sizing: border-box;
-  background: linear-gradient(90deg, rgba(117,94,220,1) 0%, rgba(154,66,240,1) 100%);
+      
+  background:white;
+  color:#9a42f0;
+  border: 3px solid #9a42f0;
 
-  border: none;
   border-radius: 30px;
   
   width: 5em;
   height: 35px;
   outline: none;
 
-  &:active {
-    background:white;
-    color:#9a42f0;
-    border: 3px solid #9a42f0;
-    // transition: 200ms ease;
-  }
-}
-
-.comment__delete-btn {
-  text-decoration: none;
-  box-sizing: border-box;
-  background: white;
-  border: none;
-  color: #b8bbbe;
-  width: 3.5em;
-  outline: none;
-  transition: 150ms all;
-
   &:hover {
-    color:#8750E6;
-    transition: 150ms all;
-  }
-
-  &:active{
-    color:#8750E6;
+    background: linear-gradient(90deg, rgba(117,94,220,1) 0%, rgba(154,66,240,1) 100%);
+    color: white; 
+    border: none;
+    transition: 150ms ease-in;
   }
 }
+
+
