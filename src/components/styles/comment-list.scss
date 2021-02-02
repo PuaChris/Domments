@@ -1,31 +1,84 @@
 
-.comment-list__login-container {
-  padding: 0.3em;
-  background-color: white;
-  color: #202020;
-  width: 20em;
-  min-height: 10em;
-  border: 1.5px solid rgba(0, 0, 0, 0.144);
-  border-radius: 0.5em;
-  box-shadow:
-  0 2.8px 2.2px rgba(0, 0, 0, 0.034),
-  0 6.7px 5.3px rgba(0, 0, 0, 0.048),
-  0 12.5px 10px rgba(0, 0, 0, 0.06),
-  0 22.3px 17.9px rgba(0, 0, 0, 0.072);
+// TODO: Temporarily same design as regular comments but plan to make it its own design later
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap');
+
+.comment-list__login-container {
   position: absolute;
   left: 10%;
   top: 6%;
-}
 
-.comment-list__login-form-container {
-  height: 1em;
+  background-color: white;
+  margin: 0.3em;
+  color: #202020;
+  width: 22em;
+  min-height: 16.5em;
+  border-radius: 6px;
+  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 
+              0 6.7px 5.3px rgba(0, 0, 0, 0.048);
+
+  
 }
 
 .comment-list__login-form {
-  // Changes width of TextField
-  font-size: 0.9em;
-  outline: none;
+  min-height: 16.5em;
+}
+
+.comment-list__login-form-container {
+  width: 100%;
+  min-height: 16.5em;
+  padding-bottom: 15px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+}
+
+.comment-list__login-form-username-container {
+  width: 100%;
+  font-family: 'Rubik', sans-serif;
+
+}
+
+.comment-list__login-form-username-header {
+  font-size: 18px;
+  font-weight: 500;
+
+  text-align: left;
+  padding: 5px 25px;
+}
+
+.comment-list__login-form-username {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+
+  height: 60%;
+  width: 86%;
+  resize: none;
+  padding: 8px;
+  line-height: 1.5;
+
+  display:inline-block;
+  box-sizing: border-box;
+
+  border: none;
+  border-radius: 4px;
+
+  box-shadow: 0 6.7px 5.3px rgba(0, 0, 0, 0.048);
+
+  background-color: #E6E6E6;
+
+  &:focus{
+    outline: none;
+    border: 2px solid #8750E6;
+    border-radius: 4px;
+    padding: 6px;
+  }
 }
 
 .comment-list__comments {
@@ -37,21 +90,36 @@
 .comment-list__login-btn {
   text-decoration: none;
   box-sizing: border-box;
-  background: white;
-  border: 1.5px solid #2979FF;
-  border-radius: 6px; 
-  color: #2979FF;
-  width: 12em;
-  outline: none;
-}
 
-.comment-list__login-btn:active {
-  background-color: #2979FF;
+  height: 35px;
+  width: 86%;
+
+  border: none;
+  border-radius: 4px;
+
   color: white;
+  background: linear-gradient(90deg, #755edc 0%, #9a42f0 100%);
+
+  outline: none;
+  
+  font-family: 'Rubik', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+
+  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048);
+
+  &:active {
+    background:white;
+    color:#9a42f0;
+    border: 2px solid #9a42f0;
+    // transition: 200ms ease;
+  }
+  
 }
 
 .comment-list__container {
   background-color: #E1E7EC;
+  height: 900px;
 }
 
 .comment-list__add-btn {
@@ -67,12 +135,11 @@
   outline: none;
   font-weight: bold;
   font-size: larger;
-}
 
-.comment-list__add-btn:active {
-  background-color: #2979FF;
-  color: white;
+  &:active {
+    background-color: #2979FF;
+    color: white;
+  }
 }
-
 
 

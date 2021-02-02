@@ -81,22 +81,6 @@ function Comment(props) {
                 </button>
               </div>
               <div className="comment__message-container">
-                {/* <TextField
-                  onChange={handleChange}
-                  // TODO: Add names to comments 
-                  // label={userName}
-                  defaultValue={message}
-                  placeholder="Enter comment here"
-                  multiline
-                  margin="normal"
-                  rows={3}
-                  fullWidth
-                  variant="outlined"
-                  autoFocus 
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                /> */}
                 <textarea 
                   className="comment__message"
                   onChange={handleChange}
@@ -106,10 +90,7 @@ function Comment(props) {
                   placeholder="Enter comment here"
                   multiline
                   margin="normal"
-                >
-
-                </textarea>
-
+                />
               </div>
               <div className="comment__btn-container">
                   <input

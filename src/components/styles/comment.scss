@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap');
 
 .comment {
   list-style: none;
@@ -11,7 +9,7 @@
   margin: 0.3em;
   color: #202020;
   width: 22em;
-  min-height: 16em;
+  min-height: 16.5em;
   border-radius: 6px;
   box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048);
 }
@@ -25,32 +23,33 @@
   flex-direction: row;
   justify-content: space-between;
   text-align: right;
-  padding: 10px 10px;
+  padding: 10px 10px 6px 10px;
   height: 30px;
 }
 .comment__timestamp{
   text-align: right;
   vertical-align: bottom;
   font-size: 1em;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-weight: 500;
-  padding: 5px 0 0 8px;
+  padding: 5px 0 0 14px;
 }
 
 .comment__message-container {  
   width: 100%;
   height: 150px;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
 }
 
 .comment__message {
-  font-size: 17px;
+  font-size: 16px;
   font-family: 'Rubik', sans-serif;
   height: 90%;
-  width: 85%;
+  width: 86%;
   resize: none;
   border: none;
-  padding: 8px;
+  padding: 8px 0;
+  line-height: 1.5;
 
   &:focus{
     outline: none;
@@ -63,17 +62,17 @@
 .comment__btn-container {
   display: flex;
   flex-direction: row;
-  margin-left: 20px;
+  margin-left: 24px;
 }
 
 .comment__submit-btn {
   text-decoration: none;
-  font-size: 20px;
-  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 500;
   color: white;
 
   box-sizing: border-box;
-  background: #755edc;
   background: linear-gradient(90deg, rgba(117,94,220,1) 0%, rgba(154,66,240,1) 100%);
 
   border: none;
@@ -82,12 +81,6 @@
   width: 5em;
   height: 35px;
   outline: none;
-
-  // transition: 100ms all;
-
-  &:hover{
-
-  }
 
   &:active {
     background:white;
