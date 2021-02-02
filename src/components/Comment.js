@@ -64,19 +64,24 @@ function Comment(props) {
       >
           <div className="comment__container">
             <form 
-              className={classes.root} 
               noValidate
               autoComplete="off" 
+              className="comment__form"
               onSubmit={handleSave} 
             >
-              <div className="comment__timestamp-container">
+              <div className="comment__header-container">
                 <span className="comment__timestamp">
                   { timestamp } 
                 </span>
+                <button
+                  className="comment__delete-btn" 
+                  type="button" 
+                  onClick={handleDelete}>
+                    <i class="fas fa-times fa-2x"></i>
+                </button>
               </div>
               <div className="comment__message-container">
-                <TextField
-                  className="comment__message"
+                {/* <TextField
                   onChange={handleChange}
                   // TODO: Add names to comments 
                   // label={userName}
@@ -91,20 +96,33 @@ function Comment(props) {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                />
-                <div className="comment__btn-container">
+                /> */}
+                <textarea 
+                  className="comment__message"
+                  onChange={handleChange}
+                  // TODO: Add names to comments 
+                  // label={userName}
+                  defaultValue={message}
+                  placeholder="Enter comment here"
+                  multiline
+                  margin="normal"
+                >
+
+                </textarea>
+
+              </div>
+              <div className="comment__btn-container">
                   <input
                     className="comment__submit-btn"
                     type="submit"
-                    value="Comment"
+                    value="Save"
                   />
-                  <button
+                  {/* <button
                     className="comment__delete-btn" 
                     type="button" 
                     onClick={handleDelete}>
                     <i className="far fa-trash-alt" />
-                  </button>
-                </div>
+                  </button> */}
               </div>
             </form>
 

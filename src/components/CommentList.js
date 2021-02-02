@@ -90,7 +90,7 @@ class CommentList extends Component {
 
   async handleLoginSubmit (event) {
     console.log(`Processing login...`);
-    const  { userId } = this.state.userData;
+    const { userId } = this.state.userData;
 
     if (userId && userId !== ""){
       event.preventDefault();
